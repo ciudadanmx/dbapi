@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql22
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - wikinet
+    ports:
+      - "3307:3306"
+
+  mediawiki:
+    image: mediawiki:latest
+    container_name: mediawiki
+    ports:
+      - 8084:80  # Asegúrate de que este puerto esté libre
+    environment:
+      MEDIAWIKI_DB_HOST: ${MEDIAWIKI_DB_HOST}
+      MEDIAWIKI_DB_PORT: ${MEDIAWIKI_DB_PORT}
+      MEDIAWIKI_DB_NAME: ${MEDIAWIKI_DB_NAME}
+      MEDIAWIKI_DB_USER: ${MEDIAWIKI_DB_USER}
+      MEDIAWIKI_DB_PASSWORD: ${MEDIAWIKI_DB_PASSWORD}
+    volumes:
+      - ./mediawiki_data:/var/www/html
+    networks:
+      - wikinet
+
+volumes:
+  mysqldata:
+    driver: local
+
+networks:
+  wikinet:
+    driver: bridge
